@@ -12,7 +12,6 @@ func PsqlTagToSql(s interface{}) string {
 	if r.Kind() != reflect.Ptr {
 		log.Fatal("Wrong type struct")
 	}
-
 	var result string
 	for i := 0; i < numfield; i++ {
 		result += reflect.TypeOf(s).Elem().Field(i).Tag.Get("psql")
@@ -29,7 +28,7 @@ func GetPsqlTagsAndValues(s interface{}) (string, string) {
 	if r.Kind() != reflect.Ptr {
 		log.Fatal("Wrong type struct")
 	}
-	var fields map[string]string
+	var fields = make(map[string]string)
 	var i int
 	for i = 0; i < numfield; i++ {
 		if !r.Elem().Field(i).IsZero() {
