@@ -41,7 +41,7 @@ func GetPsqlTagsAndValues(s interface{}) (string, string) {
 	i = 0
 	for k, v := range fields {
 		tags += k
-		values += v
+		values += "'"+v+"'"
 		if i+1 < len(fields) {
 			tags += ", "
 			values += ", "
