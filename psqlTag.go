@@ -46,6 +46,7 @@ func GetPsqlTagsAndValues(s interface{}) (string, string) {
 			tags += ", "
 			values += ", "
 		}
+		i++
 	}
 	return tags, values
 }
