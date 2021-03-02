@@ -39,15 +39,33 @@ func GetPsqlTagsAndValues(s interface{}) (string, string) {
 	}
 	var tags string
 	var values string
-	i = 0
+	i = 1
 	for k, v := range fields {
 		tags += k
 		values += "'"+v+"'"
-		if i+1 < len(fields) {
+		if i < len(fields) {
 			tags += ", "
 			values += ", "
 		}
 		i++
 	}
 	return tags, values
+}
+
+func GetPsqlTagsNames (s interface{}) string {
+	r := reflect.ValueOf(s)
+	numfield := r.Elem().NumField()
+	if r.Kind() != reflect.Ptr {
+		log.Fatal("Wrong type struct")
+	}
+	var i int
+	var tags string
+	for i = 0; i < numfield; i++ {
+		tag := reflect.TypeOf(s).Elem().Field(i).Tag.Get("psql")
+		tags += strings.Split(tag, " ")[0]
+		if (i+1 < numfield) {
+			tags += ", "
+		}
+	}
+	return tags
 }
