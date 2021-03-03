@@ -32,11 +32,12 @@ func GetPsqlTagsAndValues(s interface{}) (string, string) {
 	var fields = make(map[string]string)
 	var i int
 	for i = 0; i < numfield; i++ {
-		if !r.Elem().Field(i).IsZero() {
-			tag := reflect.TypeOf(s).Elem().Field(i).Tag.Get("psql")
+		tag := reflect.TypeOf(s).Elem().Field(i).Tag.Get("psql")
+		if !strings.Contains(tag, "IDENTITY") {
 			fields[strings.Split(tag, " ")[0]] = fmt.Sprint(r.Elem().Field(i).Interface())
 		}
 	}
+		
 	var tags string
 	var values string
 	i = 1
