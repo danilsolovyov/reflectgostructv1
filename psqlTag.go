@@ -33,17 +33,16 @@ func GetPsqlTagsAndValues(s interface{}) (string, string) {
 	var i int
 	for i = 0; i < numfield; i++ {
 		tag := reflect.TypeOf(s).Elem().Field(i).Tag.Get("psql")
-		if !strings.Contains(tag, "IDENTITY") {
+		if !r.Elem().Field(i).IsZero() && !strings.Contains(tag, "IDENTITY") {
 			fields[strings.Split(tag, " ")[0]] = fmt.Sprint(r.Elem().Field(i).Interface())
 		}
 	}
-		
 	var tags string
 	var values string
 	i = 1
 	for k, v := range fields {
 		tags += k
-		values += "'"+v+"'"
+		values += "'" + v + "'"
 		if i < len(fields) {
 			tags += ", "
 			values += ", "
@@ -53,7 +52,7 @@ func GetPsqlTagsAndValues(s interface{}) (string, string) {
 	return tags, values
 }
 
-func GetPsqlTagsNames (s interface{}) string {
+func GetPsqlTagsNames(s interface{}) string {
 	r := reflect.ValueOf(s)
 	numfield := r.Elem().NumField()
 	if r.Kind() != reflect.Ptr {
@@ -64,7 +63,7 @@ func GetPsqlTagsNames (s interface{}) string {
 	for i = 0; i < numfield; i++ {
 		tag := reflect.TypeOf(s).Elem().Field(i).Tag.Get("psql")
 		tags += strings.Split(tag, " ")[0]
-		if (i+1 < numfield) {
+		if i+1 < numfield {
 			tags += ", "
 		}
 	}
