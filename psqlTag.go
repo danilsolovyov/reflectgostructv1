@@ -31,14 +31,17 @@ func GetPsqlTagsAndValues(s interface{}) (string, string) {
 		log.Fatal("Wrong type struct")
 	}
 	var fields = make(map[string]string)
+	
 	var i int
 	for i = 0; i < numfield; i++ {
 		tag := reflect.TypeOf(s).Elem().Field(i).Tag.Get("psql")
-		if !r.Elem().Field(i).IsZero() && !strings.Contains(tag, "IDENTITY") {
+		val := r.Elem().Field(i).Interface()
+
+		if (!r.Elem().Field(i).IsZero() || reflect.ValueOf(val).Kind() == reflect.Bool) && !strings.Contains(tag, "IDENTITY") {
 			var value string
-			switch fmt.Sprint(reflect.TypeOf(r.Elem().Field(i).Interface())){
+			switch fmt.Sprint(reflect.TypeOf(val)){
 			case "time.Time":
-				value = fmt.Sprint(r.Elem().Field(i).Interface().(time.Time).Format(time.RFC3339))
+				value = fmt.Sprint(val.(time.Time).Format(time.RFC3339))
 			default:
 				value = fmt.Sprint(r.Elem().Field(i).Interface())
 			}
@@ -48,6 +51,7 @@ func GetPsqlTagsAndValues(s interface{}) (string, string) {
 
 	var tags string
 	var values string
+	
 	i = 1
 	for k, v := range fields {
 		tags += k
@@ -58,6 +62,7 @@ func GetPsqlTagsAndValues(s interface{}) (string, string) {
 		}
 		i++
 	}
+	
 	return tags, values
 }
 
