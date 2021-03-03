@@ -5,6 +5,7 @@ import (
 	"log"
 	"reflect"
 	"strings"
+	"time"
 )
 
 func PsqlTagToSql(s interface{}) string {
@@ -34,9 +35,17 @@ func GetPsqlTagsAndValues(s interface{}) (string, string) {
 	for i = 0; i < numfield; i++ {
 		tag := reflect.TypeOf(s).Elem().Field(i).Tag.Get("psql")
 		if !r.Elem().Field(i).IsZero() && !strings.Contains(tag, "IDENTITY") {
-			fields[strings.Split(tag, " ")[0]] = fmt.Sprint(r.Elem().Field(i).Interface())
+			var value string
+			switch fmt.Sprint(reflect.TypeOf(r.Elem().Field(i).Interface())){
+			case "time.Time":
+				value = fmt.Sprint(r.Elem().Field(i).Interface().(time.Time).Format(time.RFC3339))
+			default:
+				value = fmt.Sprint(r.Elem().Field(i).Interface())
+			}
+			fields[strings.Split(tag, " ")[0]] = value
 		}
 	}
+
 	var tags string
 	var values string
 	i = 1
